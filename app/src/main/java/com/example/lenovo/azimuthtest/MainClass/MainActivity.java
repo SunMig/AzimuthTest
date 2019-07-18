@@ -149,134 +149,141 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-
-
-//        switch (event.sensor.getType()){
-////            case Sensor.TYPE_ACCELEROMETER:
-////                accVal=event.values.clone();
-////                Log.i("TAG-acc"," "+accVal[0]);
-////                if(stepDectFsm.StepDect(accVal)){
-////                    stepLength=stepDectFsm.getStepLength();
-////                    Log.i(TAG,"The Step length is : "+stepLength);
-////                    stepcount++;
-////                    tv1.setText("Step number is : "+stepcount);
-////                    tv2.setText("Step length is : "+stepLength);
-////                }
-////                break;
-//            case Sensor.TYPE_MAGNETIC_FIELD:
-//                magVal=event.values.clone();
-//                tv4.setText("磁力x方向："+magVal[0]);
-//                tv5.setText("磁力y方向："+magVal[1]);
-//                tv6.setText("磁力z方向："+magVal[2]);
-//                update++;
-//                Log.i("TAG-mag 1",""+magVal[0]+" "+update);
-//                string=string+magVal[0]+","+magVal[1]+","+magVal[2]+",";
-//                break;
-//            case Sensor.TYPE_GRAVITY:
-//                gVal=event.values.clone();
-//                string=string+gVal[0]+","+gVal[1]+","+gVal[2]+",";
-////                tv4.setText("重力加速度x方向："+gVal[0]);
-////                tv5.setText("重力加速度y方向："+gVal[1]);
-////                tv6.setText("重力加速度z方向："+gVal[2]);sb.append(magVal[0]).append(',').append(magVal[1]).append(',').append(magVal[2]).append(',');
-//                update++;
-//                Log.i("TAG-gravity 2",""+gVal[0]+" "+update);
-//                break;
-//            case Sensor.TYPE_GYROSCOPE:
-//                grVal=event.values.clone();
-//                update++;
-//                Log.i("TAG-gyroscope 3",""+grVal[0]+" "+update);
-//                string=string+grVal[0]+","+grVal[1]+","+grVal[2];
-//                break;
-////            case Sensor.TYPE_PRESSURE:
-////                pressure=event.values[0];
-////                Log.i("TAG-pressure: ",""+pressure);
-//            default:
-//                break;
+        String string="";
+        switch (event.sensor.getType()){
+            case Sensor.TYPE_ACCELEROMETER:
+                accVal=event.values.clone();
+                Log.i("TAG-acc"," "+accVal[0]);
+                if(stepDectFsm.StepDect(accVal)){
+                    stepLength=stepDectFsm.getStepLength();
+                    Log.i(TAG,"The Step length is : "+stepLength);
+                    stepcount++;
+                    tv1.setText("Step number is : "+stepcount);
+                    tv2.setText("Step length is : "+stepLength);
+                }
+                break;
+            case Sensor.TYPE_MAGNETIC_FIELD:
+                magVal=event.values.clone();
+                isMAg=true;
+                tv4.setText("磁力x方向："+magVal[0]);
+                tv5.setText("磁力y方向："+magVal[1]);
+                tv6.setText("磁力z方向："+magVal[2]);
+                update++;
+                Log.i("TAG-mag 1",""+magVal[0]+" "+update);
+                string=string+magVal[0]+" "+magVal[1]+" "+magVal[2]+" ";
+                break;
+            case Sensor.TYPE_GRAVITY:
+                gVal=event.values.clone();
+                isGRa=true;
+                string=string+gVal[0]+" "+gVal[1]+" "+gVal[2]+" ";
+//                tv4.setText("重力加速度x方向："+gVal[0]);
+//                tv5.setText("重力加速度y方向："+gVal[1]);
+//                tv6.setText("重力加速度z方向："+gVal[2]);sb.append(magVal[0]).append(',').append(magVal[1]).append(',').append(magVal[2]).append(',');
+                update++;
+                Log.i("TAG-gravity 2",""+gVal[0]+" "+update);
+                break;
+            case Sensor.TYPE_GYROSCOPE:
+                grVal=event.values.clone();
+                update++;
+                isGYR=true;
+                Log.i("TAG-gyroscope 3",""+grVal[0]+" "+update);
+                string=string+grVal[0]+" "+grVal[1]+" "+grVal[2]+" ";
+                break;
+//            case Sensor.TYPE_PRESSURE:
+//                pressure=event.values[0];
+//                Log.i("TAG-pressure: ",""+pressure);
+            default:
+                break;
+        }
+//        if (event.sensor.getType() == Sensor.TYPE_GRAVITY) {
+//            gVal = event.values.clone();
+//            isGRa=true;
 //        }
-        if (event.sensor.getType() == Sensor.TYPE_GRAVITY) {
-            gVal = event.values.clone();
-            isGRa=true;
-        }
-        if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
-            grVal = event.values.clone();
-            isGYR=true;
-        }
-        if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-            magVal = event.values.clone();
-            isMAg=true;
-        }
+//        if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
+//            grVal = event.values.clone();
+//            isGYR=true;
+//        }
+//        if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+//            magVal = event.values.clone();
+//            isMAg=true;
+//        }
         float Azimuth=0f;
         //调用方法
-        if(isGRa&&isGYR&&isMAg) {
-            Quaternion = fusingClass.AHRSupdate(grVal[0], grVal[1], grVal[2], gVal[0], gVal[1], gVal[2], magVal[0], magVal[1], magVal[2]);
-            QuaternionToEuler(Quaternion);
-            Euler_degrees=Euler.clone();
-            isGRa=false;
-            isGYR=false;
-            isMAg=false;
-            Log.i(TAG,"data"+","+gVal[0]+","+gVal[1]+","+gVal[2]+","+
-                    grVal[0]+","+grVal[1]+","+grVal[2]+","+magVal[0]+","+magVal[1]+","+magVal[2]);
-            Azimuth=(float)Math.toDegrees(Euler_degrees[2])+90.0f;
-            if(Azimuth<0){
-                Azimuth=360+Azimuth;
-                Azimuth=Azimuth-4.5f;//徐州地磁偏角
-                tv3.setText("Azimuth is : "+Azimuth);
-            }else{
-                Azimuth=Azimuth-4.5f;
-                if(Azimuth<0){
-                    Azimuth=0f;
-                }
-                tv3.setText("Azimuth is : "+Azimuth);
-            }
-            //此处的校正是根据实际的调试结果校正的，具体原因需要后续研究....
-//            if(Azimuth>=0&&Azimuth<=270){
-//                Azimuth=100+Azimuth;
+//        if(isGRa&&isGYR&&isMAg) {
+//            Quaternion = fusingClass.AHRSupdate(grVal[0], grVal[1], grVal[2], gVal[0], gVal[1], gVal[2], magVal[0], magVal[1], magVal[2]);
+//            QuaternionToEuler(Quaternion);
+//            Euler_degrees=Euler.clone();
+//            isGRa=false;
+//            isGYR=false;
+//            isMAg=false;
+//            Log.i(TAG,"data"+","+gVal[0]+","+gVal[1]+","+gVal[2]+","+
+//                    grVal[0]+","+grVal[1]+","+grVal[2]+","+magVal[0]+","+magVal[1]+","+magVal[2]);
+//            Azimuth=(float)Math.toDegrees(Euler_degrees[2])+90.0f;
+//            if(Azimuth<0){
+//                Azimuth=360+Azimuth;
+//                Azimuth=Azimuth-4.5f;//徐州地磁偏角
 //                tv3.setText("Azimuth is : "+Azimuth);
-//            }else {
-//                Azimuth=Azimuth-270;
-//                if(Azimuth>0&&Azimuth<=180){
-//                    Azimuth=Azimuth-10;
+//            }else{
+//                Azimuth=Azimuth-4.5f;
+//                if(Azimuth<0){
+//                    Azimuth=0f;
 //                }
 //                tv3.setText("Azimuth is : "+Azimuth);
 //            }
+//            //此处的校正是根据实际的调试结果校正的，具体原因需要后续研究....
+////            if(Azimuth>=0&&Azimuth<=270){
+////                Azimuth=100+Azimuth;
+////                tv3.setText("Azimuth is : "+Azimuth);
+////            }else {
+////                Azimuth=Azimuth-270;
+////                if(Azimuth>0&&Azimuth<=180){
+////                    Azimuth=Azimuth-10;
+////                }
+////                tv3.setText("Azimuth is : "+Azimuth);
+////            }
+//            Log.i(TAG," "+Azimuth);
+//            String message=null;
+//            //float Azimuth=getAzimuthInDegree(gVal,magVal);
+//            message=""+Azimuth+" "+stepLength+"\n";
+//            //把方位和步长数据写入
+//            if(doWrite){
+//                WriteFileSdcard(message);
+//            }
+//        }
+
+        if(isGRa&&isGYR&&isMAg){
+            SensorManager.getRotationMatrix(Rorate,null,gVal,magVal);
+            SensorManager.getOrientation(Rorate,OriVal);
+            isGRa=false;
+            isGYR=false;
+            isMAg=false;
+            Azimuth= (float) Math.toDegrees(OriVal[0]);
+            if(Math.toDegrees(OriVal[0])<0){
+                Azimuth=360+Azimuth;
+                tv3.setText("Azimuth is : "+Azimuth);
+            }else{
+                tv3.setText("Azimuth is : "+Azimuth);
+            }
             Log.i(TAG," "+Azimuth);
-            String message=null;
-            //float Azimuth=getAzimuthInDegree(gVal,magVal);
-            message=""+Azimuth+" "+stepLength+"\n";
+//            if(Math.toDegrees(Euler_degrees[0])<0){
+//                Azimuth=360+Azimuth;
+//                tv3.setText("Azimuth is : "+Azimuth);
+//            }else {
+//                tv3.setText("Azimuth is : "+Azimuth);
+//            }
+//            tv3.setText("Azimuth is : "+Euler_degrees[0]);
+            //文件操作
+//            String message=null;
+//            //float Azimuth=getAzimuthInDegree(gVal,magVal);
+//            message=""+Azimuth+" "+stepLength+"\n";
+            string=string+Azimuth+" "+stepLength+"\n";
             //把方位和步长数据写入
             if(doWrite){
-                WriteFileSdcard(message);
+                WriteFileSdcard(string);
             }
+            tv3.setText("Azimuth is : "+Azimuth);
         }
 
-
-//        SensorManager.getRotationMatrix(Rorate,null,gVal,magVal);
-//        SensorManager.getOrientation(Rorate,OriVal);
-//        float Azimuth=0f;
-//        Azimuth= (float) Math.toDegrees(OriVal[0]);
-//        if(Math.toDegrees(OriVal[0])<0){
-//            Azimuth=360+Azimuth;
-//            tv3.setText("Azimuth is : "+Azimuth);
-//        }else{
-//            tv3.setText("Azimuth is : "+Azimuth);
-//        }
-//        Log.i(TAG," "+Azimuth);
-//        if(Math.toDegrees(Euler_degrees[0])<0){
-//            Azimuth=360+Azimuth;
-//            tv3.setText("Azimuth is : "+Azimuth);
-//        }else {
-//            tv3.setText("Azimuth is : "+Azimuth);
-//        }
-        //tv3.setText("Azimuth is : "+Euler_degrees[0]);
-        //文件操作
-//        String message=null;
-//        //float Azimuth=getAzimuthInDegree(gVal,magVal);
-//        message=""+Azimuth+" "+stepLength+"\n";
-//        //把方位和步长数据写入
-//        if(doWrite){
-//            WriteFileSdcard(message);
-//        }
-//        tv3.setText("Azimuth is : "+Azimuth);
     }
 
     @Override
