@@ -5,5 +5,5 @@ package com.example.lenovo.azimuthtest.CollectTimeSet;
  */
 
 public class FileName {
-    public static final String str="sun";
+    public static final String str="sunshine";
 }

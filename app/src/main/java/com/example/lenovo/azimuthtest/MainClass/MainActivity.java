@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     float[] Euler=new float[3];
     private int update=0;
     boolean isGRa=false,isGYR=false,isMAg=false;
+    private int count=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,12 +76,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onClick(View view) {
                 doWrite=true;
+                count=count+1;
+                fileName=fileName+"_"+count;
+                Log.d(TAG,"Start...");
             }
         });
         bt2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 doWrite=false;
+                fileName="Azimuthdata";
             }
         });
 
@@ -153,10 +158,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         switch (event.sensor.getType()){
             case Sensor.TYPE_ACCELEROMETER:
                 accVal=event.values.clone();
-                Log.i("TAG-acc"," "+accVal[0]);
                 if(stepDectFsm.StepDect(accVal)){
                     stepLength=stepDectFsm.getStepLength();
-                    Log.i(TAG,"The Step length is : "+stepLength);
                     stepcount++;
                     tv1.setText("Step number is : "+stepcount);
                     tv2.setText("Step length is : "+stepLength);
@@ -169,7 +172,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 tv5.setText("磁力y方向："+magVal[1]);
                 tv6.setText("磁力z方向："+magVal[2]);
                 update++;
-                Log.i("TAG-mag 1",""+magVal[0]+" "+update);
                 string=string+magVal[0]+" "+magVal[1]+" "+magVal[2]+" ";
                 break;
             case Sensor.TYPE_GRAVITY:
@@ -180,13 +182,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //                tv5.setText("重力加速度y方向："+gVal[1]);
 //                tv6.setText("重力加速度z方向："+gVal[2]);sb.append(magVal[0]).append(',').append(magVal[1]).append(',').append(magVal[2]).append(',');
                 update++;
-                Log.i("TAG-gravity 2",""+gVal[0]+" "+update);
                 break;
             case Sensor.TYPE_GYROSCOPE:
                 grVal=event.values.clone();
                 update++;
                 isGYR=true;
-                Log.i("TAG-gyroscope 3",""+grVal[0]+" "+update);
                 string=string+grVal[0]+" "+grVal[1]+" "+grVal[2]+" ";
                 break;
 //            case Sensor.TYPE_PRESSURE:
