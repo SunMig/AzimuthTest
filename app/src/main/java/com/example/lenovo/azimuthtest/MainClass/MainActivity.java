@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private float meanAzimuthInDegree = 0f;
     private String[] needed_permission;
     private boolean doWrite=false;
-    String fileName="Azimuthdata";
+    String fileName="magneticdata";
     String sdPath;
     private float stepLength=0f;
     float[] Euler=new float[3];
@@ -207,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //            magVal = event.values.clone();
 //            isMAg=true;
 //        }
-        float Azimuth=0f;
+        float Azimuth=0f,Poitch=0f,Roll=0f;
         //调用方法
 //        if(isGRa&&isGYR&&isMAg) {
 //            Quaternion = fusingClass.AHRSupdate(grVal[0], grVal[1], grVal[2], gVal[0], gVal[1], gVal[2], magVal[0], magVal[1], magVal[2]);
@@ -258,13 +258,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             isGYR=false;
             isMAg=false;
             Azimuth= (float) Math.toDegrees(OriVal[0]);
+            Poitch=(float)Math.toDegrees(OriVal[1]);
+            Roll= (float) Math.toDegrees(OriVal[2]);
             if(Math.toDegrees(OriVal[0])<0){
                 Azimuth=360+Azimuth;
                 tv3.setText("Azimuth is : "+Azimuth);
             }else{
                 tv3.setText("Azimuth is : "+Azimuth);
             }
-            Log.i(TAG," "+Azimuth);
+            Log.i(TAG," "+Roll);
 //            if(Math.toDegrees(Euler_degrees[0])<0){
 //                Azimuth=360+Azimuth;
 //                tv3.setText("Azimuth is : "+Azimuth);
@@ -276,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //            String message=null;
 //            //float Azimuth=getAzimuthInDegree(gVal,magVal);
 //            message=""+Azimuth+" "+stepLength+"\n";
-            string=string+Azimuth+" "+stepLength+"\n";
+            string=string+Azimuth+" "+Poitch+" "+Roll+" "+stepLength+"\n";
             //把方位和步长数据写入
             if(doWrite){
                 WriteFileSdcard(string);
